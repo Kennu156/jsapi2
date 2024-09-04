@@ -1,7 +1,9 @@
 const randomJokeHTMLElement = document.querySelector('.random-jokes');
 const selectHTMLElement = document.querySelector('#categories');
+const buttonElement = document.querySelector('.generate')
 
 const base_url = "https://api.chucknorris.io/jokes"
+let selected = null;
 
 const fetchCategory = async () => {
 
@@ -17,7 +19,7 @@ const fetchCategory = async () => {
 const fetchRandomJokes = async () => {
 
     try {
-        const response = await fetch(`${base_url}/random`)
+        const response = await fetch(`${base_url}/random?category=${category}`)
         const data = await response.json()
         return data
     } catch (error) {
@@ -43,8 +45,14 @@ const fillSelectWithOptions = async () => {
 };
 
 selectHTMLElement.addEventListener('change', async (event) => {
-    const selected = event.currentTarget.value
-    await fetchRandomJokes(selected)
+    selected = event.currentTarget.value
+    const response = await fetchRandomJokes(selected)
+    randomJokeHTMLElement.textContent = response.value
+});
+
+buttonElement.addEventListener("click", async () => {
+    const response = await fetchRandomJokes(selected)
+    randomJokeHTMLElement.textContent = response.value
 })
 
 
