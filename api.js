@@ -1,84 +1,116 @@
-const randomJokeHTMLElement = document.querySelector('.random-jokes');
-const selectHTMLElement = document.querySelector('#categories');
-const buttonElement = document.querySelector('.generate')
-const searchElement = document.querySelector('#search')
-const resultElement = document.querySelector('.result-count')
+import chuckNorrisAPI from "./API/chuckNorrisAPI"
 
-const base_url = "https://api.chucknorris.io/jokes"
-let selected = null;
 
-const fetchCategory = async () => {
 
+const RandomJokeHTMLElement = document.querySelector('.random-jokes');
+const CategoriesHTMLElement = document.querySelector('#categories');
+const buttonElement = document.querySelector('.generate-button');
+const searchElement = document.querySelector('#search');
+const searchResultWrapper = document.querySelector('.search-results');
+const resultCountWrapper = document.querySelector('.result-count');
+
+
+let selectedCategory = null;
+
+
+const fetchRandomJokes = async (category = '') => {
     try {
-        const response = await fetch(`${base_url}/categories`)
-        const data = await response.json()
-        return data
+        const response = await chuckNorrisAPI.get(`/random?category=${category}`);
+
+        return response.data;
     } catch (error) {
-        throw new Error('error')    
+        throw new Error('Something went terribly wrong!');
     }
 };
 
-const fetchRandomJokes = async () => {
 
+const OptionCategory = async () => {
     try {
-        const response = await fetch(`${base_url}/random`)
-        const data = await response.json()
-        return data
+        const response = await chuckNorrisAPI.get(`/categories`)
+
+        return response.data;
     } catch (error) {
-        throw new Error('error')    
+        throw new Error('Something went terribly wrong!');
     }
 };
+
 
 const displayRandomJoke = async () => {
-    const joke = await fetchRandomJokes()
-    console.log(randomJokeHTMLElement)
-    randomJokeHTMLElement.textContent = joke.value
+    const joke = await fetchRandomJokes();
+    RandomJokeHTMLElement.innerHTML = ''; 
+    appendJokeToRandomJokes(joke.value);  
 };
+
+
+const appendJokeToRandomJokes = (jokeText) => {
+    const jokeElement = document.createElement('div');
+    jokeElement.classList.add('joke-box'); 
+    jokeElement.textContent = jokeText;
+    RandomJokeHTMLElement.appendChild(jokeElement);
+};
+
 
 const fillSelectWithOptions = async () => {
-    const categories = await fetchCategory()
-
-    if(!categories) return
-
+    const categories = await OptionCategory();
+    if (!categories) return;
     categories.forEach((category) => {
-        const option = new Option(category, category)
-        selectHTMLElement.append(option)
-    })
+        const option = new Option(category, category);
+        CategoriesHTMLElement.append(option);
+    });
 };
 
-selectHTMLElement.addEventListener('change', async (event) => {
-    selected = event.currentTarget.value
-    const response = await fetchRandomJokes(selected)
-    randomJokeHTMLElement.textContent = response.value
+
+CategoriesHTMLElement.addEventListener('change', async (event) => {
+    selectedCategory = event.currentTarget.value;
+    const response = await fetchRandomJokes(selectedCategory);
+    RandomJokeHTMLElement.innerHTML = ''; 
+    appendJokeToRandomJokes(response.value); 
 });
 
-buttonElement.addEventListener("click", async () => {
-    const response = await fetchRandomJokes(selected)
-    randomJokeHTMLElement.textContent = response.value
+
+buttonElement.addEventListener('click', async (event) => {
+    const response = await fetchRandomJokes(selectedCategory);
+    RandomJokeHTMLElement.innerHTML = ''; 
+    appendJokeToRandomJokes(response.value); 
 });
 
-searchElement.addEventListener('input', (event) => {
-    if (event.currentTarget.value < 3) return
+
+searchElement.addEventListener('input', async (event) => {
+    const query = event.currentTarget.value;
+    if (query.length < 3) {
+        searchResultWrapper.innerHTML = ''; 
+        resultCountWrapper.textContent = '';
+        return;
+    }
+
+    const response = await searchQuery(query);
+
     
-    const respone = searchQuery(event.currentTarget.value)
-    
-});
+    const resultCountPrural = response.total === 1 ? 'joke' : 'jokes';
+    resultCountWrapper.innerText = `Found ${response.total} ${resultCountPrural}.`;
 
+   
+    searchResultWrapper.innerHTML = '';
+
+    
+    response.result.forEach(joke => {
+        const jokeElement = document.createElement('div');
+        jokeElement.classList.add('joke-box');
+        jokeElement.textContent = joke.value;
+        searchResultWrapper.appendChild(jokeElement);
+    });
+});
 
 
 const searchQuery = async (query) => {
-    const url = (`${base_url}/search?query=${query}`)
+    const response = await chuckNorrisAPI.get(`/search?query=${query}`);
 
-    const response = await fetch(url)
-    const data = await response.json()
-
-    return data
-    
-}
+    return response.data;
+};
 
 
-displayRandomJoke()
+fetchRandomJokes();
 
-fetchCategory()
+displayRandomJoke();
 
-fillSelectWithOptions()
+fillSelectWithOptions();

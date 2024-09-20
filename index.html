@@ -4,12 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <input type="search" id="search" class="search">
-    <select name="categories" id="categories"></select>
-    <h1 class="random-jokes"></h1>
-    <button class="generate">geneer</button>
-    <script src="api.js"></script>
+    <header>
+        <h1 class="title">Chuck Norris jokes</h1>
+    </header>
+    <section class="search-section">
+        <label for="search">Search for jokes</label>
+        <input type="search" id="search" placeholder="search">
+        <span class="result-count"></span>
+        <div class="search-results"></div>
+    </section>
+    <div class="wrapper">
+        <label for="categories" class="category">by category</label>
+        <select name="categories" id="categories">
+            <option value="" disabled selected>select category</option>
+        </select>
+        <button class="generate-button">Geneer</button>
+        <h4 class="random-jokes"></h4>
+    </div>
+    <script src="api.js" type="module"></script>
 </body>
 </html>

@@ -1,0 +1,26 @@
+body{
+    background-color:aquamarine;
+}
+
+.title{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.search-results{
+    padding: 2rem;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+#categories{
+    border-radius: 2rem;
+}
+
+.generate-button:hover{
+    background-color:aqua;
+    padding: 1px;
+}
+
+.category{
+    font-size: xx-large;
+    font-family: fantasy;
+}

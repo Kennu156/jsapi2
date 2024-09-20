@@ -1,0 +1,20 @@
+{
+  "name": "javascript",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "api.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "Kenmartti",
+  "license": "ISC",
+  "description": "Chuck Norris jokes",
+  "dependencies": {
+    "axios": "^1.7.7"
+  },
+  "devDependencies": {
+    "vite": "^5.4.6"
+  }
+}
